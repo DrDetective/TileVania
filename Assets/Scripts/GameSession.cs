@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -7,6 +9,9 @@ using UnityEngine.SceneManagement;
 public class GameSession : MonoBehaviour
 {
     [SerializeField] float Lives = 3f;
+    [SerializeField] float score = 0f;
+    [SerializeField] TextMeshProUGUI livesText;
+    [SerializeField] TextMeshProUGUI scoreText;
     void Awake()
     {
         int GSs = FindObjectsOfType<GameSession>().Length;
@@ -19,7 +24,16 @@ public class GameSession : MonoBehaviour
             DontDestroyOnLoad(gameObject);
         }
     }
-
+    private void Start()
+    {
+        livesText.text = Lives.ToString();
+        scoreText.text = score.ToString();
+    }
+    public void Addpoints(int addScore)
+    {
+        score += addScore;
+        scoreText.text = score.ToString();
+    }
     public void PlayerDead()
     {
         if (Lives > 1)
@@ -36,9 +50,11 @@ public class GameSession : MonoBehaviour
         Lives--;
         int CurrentScene = SceneManager.GetActiveScene().buildIndex;
         SceneManager.LoadScene(CurrentScene);
+        livesText.text = Lives.ToString();
     }
     void ResetGSession()
     {
+        FindAnyObjectByType<Persist>().ResetPScene();
         SceneManager.LoadScene(0);
         Destroy(gameObject);
     }
